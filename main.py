@@ -86,7 +86,7 @@ async def ytdl_stop_handler(request):
     except Exception as e:
         return json({'body': {'status': 'error', 'message': str(e)}}, 200)
 
-@app.after_server_start
+@app.main_process_start
 async def start_bot(*_):
     await bot.start(bot_token=os.getenv('TELEGRAM_TOKEN'))
 
