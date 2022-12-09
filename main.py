@@ -24,6 +24,7 @@ from sanic.response import json
 
 
 bot = TelegramClient('bot', int(os.getenv('TELEGRAM_API_ID')), os.getenv('TELEGRAM_API_HASH'))
+bot.session.save_entities = False
 app = Sanic('bilderberg-butler-ytdl')
 ytdl_opts = {
     'no_color': True,
