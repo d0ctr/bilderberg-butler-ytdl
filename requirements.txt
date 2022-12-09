@@ -1,0 +1,19 @@
+-i https://pypi.org/simple
+aiofiles==22.1.0 ; python_version >= '3.7' and python_version < '4.0'
+cffi==1.15.1
+cryptography==38.0.4 ; python_version >= '3.6'
+httptools==0.5.0 ; python_full_version >= '3.5.0'
+multidict==6.0.3 ; python_version >= '3.7'
+pyaes==1.6.1
+pyasn1==0.4.8
+pycparser==2.21
+python-dotenv==0.21.0 ; python_version >= '3.7'
+python-dotenv-vault==0.2.0
+rsa==4.9 ; python_version >= '3.6' and python_version < '4'
+sanic==22.9.1
+sanic-routing==22.8.0
+telethon==1.26.0
+ujson==5.6.0 ; sys_platform != 'win32' and implementation_name == 'cpython'
+uvloop==0.17.0 ; sys_platform != 'win32' and implementation_name == 'cpython'
+websockets==10.4 ; python_version >= '3.7'
+youtube-dl==2021.12.17
