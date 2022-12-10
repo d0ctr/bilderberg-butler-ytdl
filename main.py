@@ -24,7 +24,7 @@ from sanic.response import json
 
 
 app = Sanic('bilderberg-butler-ytdl')
-app.ctx.tg = TelegramClient('bot', int(os.getenv('TELEGRAM_API_ID')), os.getenv('TELEGRAM_API_HASH'), loop=app.loop)
+
 ytdl_opts = {
     'no_color': True,
     'format': 'best[ext=mp4]'
@@ -87,6 +87,7 @@ async def ytdl_stop_handler(request):
 
 @app.main_process_start
 async def start_bot(app, loop):
+    app.ctx.tg = TelegramClient('bot', int(os.getenv('TELEGRAM_API_ID')), os.getenv('TELEGRAM_API_HASH'), loop=loop)
     await app.ctx.tg.start(bot_token=os.getenv('TELEGRAM_TOKEN'))
 
 
