@@ -85,7 +85,7 @@ async def ytdl_stop_handler(request):
     except Exception as e:
         return json({'body': {'status': 'error', 'message': str(e)}}, 200)
 
-@app.main_process_start
+@app.after_server_start
 async def start_bot(app, loop):
     app.ctx.tg = TelegramClient('bot', int(os.getenv('TELEGRAM_API_ID')), os.getenv('TELEGRAM_API_HASH'), loop=loop)
     await app.ctx.tg.start(bot_token=os.getenv('TELEGRAM_TOKEN'))
