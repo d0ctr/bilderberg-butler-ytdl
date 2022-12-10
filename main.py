@@ -23,9 +23,8 @@ from sanic import Sanic
 from sanic.response import json
 
 
-bot = TelegramClient('bot', int(os.getenv('TELEGRAM_API_ID')), os.getenv('TELEGRAM_API_HASH'))
-bot.session.save_entities = False
 app = Sanic('bilderberg-butler-ytdl')
+app.ctx.tg = TelegramClient('bot', int(os.getenv('TELEGRAM_API_ID')), os.getenv('TELEGRAM_API_HASH'), loop=app.loop)
 ytdl_opts = {
     'no_color': True,
     'format': 'best[ext=mp4]'
@@ -41,7 +40,7 @@ async def download_and_send(url, telegram_chat_id, info, ydl):
     filename = ydl.prepare_filename(info)
     video_file = open(filename, 'rb')
     attrs = DocumentAttributeVideo(info['duration'], 0, 0, supports_streaming=True)
-    await bot.send_file(int(telegram_chat_id), file=video_file, caption=info['title'], attributes=[attrs])
+    await app.ctx.tg.send_file(int(telegram_chat_id), file=video_file, caption=info['title'], attributes=[attrs])
     os.remove(filename)
 
 @app.route('/ytdl', methods=['POST'])
@@ -87,8 +86,8 @@ async def ytdl_stop_handler(request):
         return json({'body': {'status': 'error', 'message': str(e)}}, 200)
 
 @app.main_process_start
-async def start_bot(*_):
-    await bot.start(bot_token=os.getenv('TELEGRAM_TOKEN'))
+async def start_bot(app, loop):
+    await app.ctx.tg.start(bot_token=os.getenv('TELEGRAM_TOKEN'))
 
 
 if __name__ == '__main__':
