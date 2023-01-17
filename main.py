@@ -11,13 +11,10 @@ if os.getenv('TELEGRAM_TOKEN') is None \
 if os.getenv('PORT') is None:
     raise Exception('PORT is not set')
 
-import io
-import asyncio
 
 import youtube_dl
-from threading import Thread
 from telethon import TelegramClient
-from telethon.tl.types import DocumentAttributeVideo
+from telethon.tl.types import DocumentAttributeVideo, DocumentAttributeAudio, DocumentAttributeFilename
 
 from sanic import Sanic
 from sanic.response import json
@@ -38,9 +35,18 @@ async def async_download(ydl, *args):
 async def download_and_send(url, telegram_chat_id, info, ydl):
     ydl.download([url])
     filename = ydl.prepare_filename(info)
-    video_file = open(filename, 'rb')
-    attrs = DocumentAttributeVideo(info['duration'], 0, 0, supports_streaming=True)
-    await app.ctx.tg.send_file(int(telegram_chat_id), file=video_file, caption=info['title'], attributes=[attrs])
+    file = open(filename, 'rb')
+    if info['ext'] == 'mp4':
+        attrs = DocumentAttributeVideo(int(info['duration']), w=0, h=0, supports_streaming=True)
+    elif info['ext'] == 'mp3':
+        attrs = DocumentAttributeAudio(int(info['duration']), voice=False, title=info['title'])
+    else:
+        attrs = DocumentAttributeFilename(f'{info["title"]}.{info["ext"]}')
+    try:
+        await app.ctx.tg.send_file(int(telegram_chat_id), file=file, attributes=[attrs])
+    except Exception as e:
+        await app.ctx.tg.send_message(int(telegram_chat_id), f'Не получилось отправить файл:\n<code>{str(e)}</code>', parse_mode='html')
+
     os.remove(filename)
 
 @app.route('/ytdl', methods=['POST'])
