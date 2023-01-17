@@ -24,7 +24,7 @@ app = Sanic('bilderberg-butler-ytdl')
 
 ytdl_opts = {
     'no_color': True,
-    'format': 'bestvideo[ext=mp4]/bestvideo/bestaudio[ext=mp3]/best'
+    'format': 'best[ext=mp4]/best[vcodec!=none]/best[ext=mp3]/best'
 }
 
 jobs = {}
@@ -36,9 +36,9 @@ async def download_and_send(url, telegram_chat_id, info, ydl):
     ydl.download([url])
     filename = ydl.prepare_filename(info)
     file = open(filename, 'rb')
-    if info['ext'] == 'mp4':
+    if info['vcodec'] != 'none':
         attrs = DocumentAttributeVideo(int(info['duration']), w=0, h=0, supports_streaming=True)
-    elif info['ext'] == 'mp3':
+    elif 'audio only' in info['format']:
         attrs = DocumentAttributeAudio(int(info['duration']), voice=False, title=info['title'])
     else:
         attrs = DocumentAttributeFilename(f'{info["title"]}.{info["ext"]}')

@@ -4,3 +4,4 @@
 !.env.project
 !.env.vault
 bot.session
+bot.session-journal
