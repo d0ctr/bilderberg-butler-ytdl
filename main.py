@@ -27,7 +27,7 @@ app = Sanic('bilderberg-butler-ytdl')
 
 ytdl_opts = {
     'no_color': True,
-    'format': 'best[ext=mp4]'
+    'format': 'bestvideo[ext=mp4]/bestvideo/bestaudio[ext=mp3]/best'
 }
 
 jobs = {}
